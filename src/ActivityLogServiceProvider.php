@@ -2,6 +2,7 @@
 
 namespace Amsrafid\ActivityLog;
 
+use Amsrafid\ActivityLog\Console\ClearLog;
 use Illuminate\Support\ServiceProvider;
 
 class ActivityLogServiceProvider extends ServiceProvider
@@ -32,5 +33,11 @@ class ActivityLogServiceProvider extends ServiceProvider
         );
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ClearLog::class
+            ]);
+        }
     }
 }
