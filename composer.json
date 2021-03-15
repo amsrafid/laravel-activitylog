@@ -1,0 +1,26 @@
+{
+    "name": "amsrafid/activity-log",
+    "description": "Fast, easy and full customizable system for activity log.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sadman Rafid",
+            "email": "amsrafid@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Amsrafid\\ActivityLog\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Amsrafid\\ActivityLog\\ActivityLogServiceProvider"
+            ]
+        }
+    }
+}
