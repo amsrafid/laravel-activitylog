@@ -22,7 +22,7 @@ class MyModel extends Model
     protected $description = "Log description";
 
     protected $ignore_log = [
-        // if any logging is to be ignored in (insert, update, delete)
+        // if any logging mode is to be ignored in (insert, update, delete)
     ];
 }
 ~~~
@@ -47,6 +47,8 @@ $log->description('My model log has been created manually.');
 $log->primary_id = $myModel->id;
 $log->create();
 ~~~
+
+_Note: Clear configuration cache to active configuration file. Otherwise, log may not be created._
 
 ## Authors
 
