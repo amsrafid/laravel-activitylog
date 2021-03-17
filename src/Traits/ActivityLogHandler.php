@@ -26,6 +26,30 @@ trait ActivityLogHandler
     private $mode;
 
     /**
+     * Ignore logging
+     * like, insert/update/delete
+     * 
+     * @var array
+     */
+    private $ignore_logging = [];
+
+    /**
+     * Validate when log is allowed to be created
+     * 
+     * @return void
+     */
+    private function validateLog()
+    {
+        if (isset($this->ignore_log)) {
+            $this->ignore_logging = $this->ignore_log;
+        }
+        
+        if (! in_array($this->mode, $this->ignore_logging)) {
+            $this->saveLogging();
+        }
+    }
+
+    /**
      * Save the model to the database.
      *
      * @param  array  $options
@@ -36,8 +60,8 @@ trait ActivityLogHandler
         $this->mode = $this->getMode();
 
         $save = parent::save($options);
-
-        $this->saveLogging();
+        
+        $this->validateLog();
 
         return $save;
     }
@@ -58,7 +82,7 @@ trait ActivityLogHandler
 
         $delete = parent::delete();
 
-        $this->saveLogging();
+        $this->validateLog();
 
         return $delete;
     }
