@@ -1,5 +1,5 @@
 {
-    "name": "amsrafid/activity-log",
+    "name": "amsrafid/laravel-activitylog",
     "description": "Fast, easy and full customizable system for activity log.",
     "type": "library",
     "license": "MIT",
