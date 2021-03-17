@@ -10,6 +10,8 @@ use Amsrafid\ActivityLog\ActivityLog;
  */
 trait ActivityLogHandler
 {
+    use PropertyHandler;
+    
     /**
      * Data modification bag
      * 
@@ -127,35 +129,14 @@ trait ActivityLogHandler
     }
 
     /**
-     * Set property value for update
-     * 
-     * @return void
-     */
-    public function setProperty()
-    {
-        $oldValue = [];
-        $newValue = array_diff_assoc($this->attributes, $this->original);
-
-        array_map(function($key) use(&$oldValue) {
-            $oldValue[$key] = $this->original[$key];
-        }, array_keys($newValue));
-
-
-        $this->property = [
-            'old' => $oldValue,
-            'new' => $newValue
-        ];
-    }
-
-    /**
      * Get mode as insert or update
      * 
      * return string
      */
     public function getMode()
     {
-        if(! empty($this->original)) {
-            $this->setProperty();
+        if (! empty($this->original)) {
+            $this->setProperty($this->attributes, $this->original);
 
             return 'update';
         }

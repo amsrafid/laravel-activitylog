@@ -4,10 +4,13 @@ namespace Amsrafid\ActivityLog;
 
 use Illuminate\Support\Facades\Facade;
 use Amsrafid\ActivityLog\ActivityLogException;
+use Amsrafid\ActivityLog\Traits\PropertyHandler;
 use Amsrafid\ActivityLog\Models\ActivityLog as ModelsActivityLog;
 
 class ActivityLog extends Facade
 {
+    use PropertyHandler;
+
     /**
      * Log name
      * 
@@ -55,6 +58,13 @@ class ActivityLog extends Facade
     protected $property = [];
 
     /**
+     * Primary key of table records to be logged
+     * 
+     * @var int|null
+     */
+    public $primary_id = null;
+
+    /**
      * Configuration information
      * 
      * @var array
@@ -76,6 +86,7 @@ class ActivityLog extends Facade
             $this->model = $modelName;
         } else if ($modelName instanceof \Illuminate\Database\Eloquent\Model) {
             $this->model = get_class($modelName);
+            $this->primary_id = $modelName->getKey();
         } else {
             throw new ActivityLogException("Model must be a string or an instance of \Illuminate\Database\Eloquent\Model in type.");
         }
