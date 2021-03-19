@@ -75,19 +75,19 @@ class Logging extends Facade
     /**
      * ActivityLog class constructor
      * 
-     * @param \Illuminate\Database\Eloquent\Model|string    $modelName
+     * @param \Illuminate\Database\Eloquent\Model|string    $model
      * @param string                                        $mode
      * @return void
      */
-    public function __construct($modelName, $mode = '')
+    public function __construct($model, $mode = '')
     {
         $this->config = config('activitylog');
 
-        if (is_string($modelName)) {
-            $this->model = $modelName;
-        } else if ($modelName instanceof Model) {
-            $this->model = get_class($modelName);
-            $this->primary_id = $modelName->getKey();
+        if (is_string($model)) {
+            $this->model = $model;
+        } else if ($model instanceof Model) {
+            $this->model = get_class($model);
+            $this->primary_id = $model->getKey();
         } else {
             throw new ActivityLogException("Model must be a string or an instance of \Illuminate\Database\Eloquent\Model in type.");
         }
