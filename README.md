@@ -63,6 +63,27 @@ $log->start();
 
 _Note: Clear configuration cache to active configuration file. Otherwise, log may not be created._
 
+## Log cleaning up
+
+Log can be deleted when a lot of activity has been recorded. To solve this problem artisan command `clear:log` can help. It can operate when run the command bellow to the command window,
+
+~~~php
+php artisan clear:log
+~~~
+
+To operate cleaning automatically, a schedule can be created to console Kernel like bellow,
+
+~~~php
+// ~/app/Console/Kernel.php
+
+protected function schedule(Schedule $schedule)
+{
+   $schedule->command('clear:log')->daily();
+}
+~~~
+
+*Note: Data will be deleted the day(s) before the value of the key `clean_log_before_days` given into config file.*
+
 ## Authors
 
 _Initial development_ - **_A. M. Sadman Rafid_**
