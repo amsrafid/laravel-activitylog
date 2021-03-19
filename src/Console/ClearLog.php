@@ -5,7 +5,7 @@ namespace Amsrafid\ActivityLog\Console;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Amsrafid\ActivityLog\Models\ActivityLog;
 
 class ClearLog extends Command
 {
@@ -61,6 +61,8 @@ class ClearLog extends Command
             return;
         }
         
+        $this->comment('Log cleaning in process...');
+
         $this->cleanLogBeforeDays = $this->config['clean_log_before_days'];
 
         $date = $this->option('date') ?? Carbon::now()->subDays($this->cleanLogBeforeDays)->format('Y-m-d');
@@ -68,17 +70,17 @@ class ClearLog extends Command
         try {
             DB::beginTransaction();
 
-            DB::statement("DELETE
-                FROM activity_logs
-                WHERE
-                    DATE(activity_logs.created_at) < '{$date}'
-            ");
+            $log = new ActivityLog();
+            $log->whereDate('activity_logs.created_at', '<',  $date)
+                ->delete();
+
+            $this->info("Deleted records before {$this->cleanLogBeforeDays} day(s) from the activity log.");
 
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
 
-            Log::critical($th->getMessage());
+            $this->error($th->getMessage());
         }
 
         return 0;
