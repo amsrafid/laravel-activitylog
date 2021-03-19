@@ -2,6 +2,7 @@
 
 namespace Amsrafid\ActivityLog;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Database\Eloquent\Model;
 use Amsrafid\ActivityLog\Models\ActivityLog;
@@ -71,30 +72,48 @@ class Logging extends Facade
      * @var array
      */
     protected $config = null;
+
+    /**
+     * Model Instance
+     * 
+     * @var \Illuminate\Database\Eloquent\Model|null
+     */
+    protected $modelInstant = null;
     
     /**
      * ActivityLog class constructor
      * 
-     * @param \Illuminate\Database\Eloquent\Model|string    $model
-     * @param string                                        $mode
+     * @param \Illuminate\Database\Eloquent\Model|string    $model      Model name or instance
+     * @param string                                        $mode       DEFAULT insert
      * @return void
      */
-    public function __construct($model, $mode = '')
+    public function __construct($model, $mode = 'insert')
     {
         $this->config = config('activitylog');
-
-        if (is_string($model)) {
-            $this->model = $model;
-        } else if ($model instanceof Model) {
-            $this->model = get_class($model);
-            $this->primary_id = $model->getKey();
-        } else {
-            throw new ActivityLogException("Model must be a string or an instance of \Illuminate\Database\Eloquent\Model in type.");
-        }
 
         if (! empty($mode)) {
             $this->mode = $mode;
         }
+
+        if (is_string($model)) {
+            $this->model = $model;
+
+            return;
+        }
+        
+        if ($model instanceof Model) {
+            $this->modelInstant = $model;
+
+            $this->formatProperty($model);
+
+            $this->model = get_class($model);
+
+            $this->primary_id = $model->getKey();
+
+            return;
+        }
+        
+        throw new ActivityLogException("Model must be a string or an instance of \Illuminate\Database\Eloquent\Model in type.");
     }
 
     /**
@@ -104,6 +123,8 @@ class Logging extends Facade
      */
     public function create()
     {
+        $query = null;
+
         if (is_null($this->mode)) {
             throw new ActivityLogException("Logging mode must not be empty.");
         }
@@ -111,25 +132,77 @@ class Logging extends Facade
         if (! $this->config['allow_null_properties'] && ! $this->propertyValidate()) {
             return true;
         }
-        
-        $log = new ActivityLog();
-        $log->log_name = $this->log_name;
-        $log->mode = $this->mode;
-        $log->description = $this->description;
-        $log->model = $this->model;
-        $log->primary_id = $this->primary_id;
-        
-        if (isset(auth()->user()->id)) {
-            $log->user_id = auth()->user()->id;
+
+        try {
+            DB::beginTransaction();
+            
+            if ($this->modelInstant instanceof Model) {
+                $query = $this->dispatchQuery();
+            }
+            
+            $log = new ActivityLog();
+            $log->log_name = $this->log_name;
+            $log->mode = $this->mode;
+            $log->description = $this->description;
+            $log->model = $this->model;
+            $log->primary_id = $this->primary_id;
+            
+            if (auth()->check()) {
+                $log->user_id = auth()->user()->id;
+            }
+    
+            $log->properties = json_encode($this->property);
+            $log->save();
+
+            DB::commit();
+            
+            return $query;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            throw new ActivityLogException($th->getMessage());
+        }
+    }
+
+    /**
+     * Dispatch query when Model instance has been found
+     * 
+     * @return bool|null
+     */
+    public function dispatchQuery()
+    {
+        if (! ($this->modelInstant instanceof Model)) {
+            return null;
         }
 
-        $log->properties = json_encode($this->property);
+        if ($this->mode == 'delete') {
+            return $this->modelInstant->delete();
+        }
+        
+        return $this->modelInstant->save();
+    }
 
-        if (! $log->save()) {
-            return false;
+    /**
+     * Format property with respect to mode
+     * 
+     * @param   \Illuminate\Database\Eloquent\Model     $model
+     * @return array
+     */
+    public function formatProperty($model)
+    {
+        if ($this->mode == 'delete') {
+            return $this->property = [
+                'old' => $model->getRawOriginal()
+            ];
         }
 
-        return true;
+        if ($this->mode == 'insert') {
+            return $this->property = [
+                'new' => $model->getAttributes()
+            ];
+        }
+
+        return $this->setProperty($model->getAttributes(), $model->getRawOriginal());
     }
 
     /**
@@ -150,7 +223,7 @@ class Logging extends Facade
      * Assign Log description
      * 
      * @param array $description
-     * @return \Amsrafid\ActivityLog\ActivityLog
+     * @return \Amsrafid\ActivityLog\Logging
      */
     public function description($description)
     {
@@ -163,7 +236,7 @@ class Logging extends Facade
      * Assign Log name
      * 
      * @param array $name
-     * @return \Amsrafid\ActivityLog\ActivityLog
+     * @return \Amsrafid\ActivityLog\Logging
      */
     public function logName($name)
     {
@@ -176,14 +249,14 @@ class Logging extends Facade
      * Assign log mode
      * 
      * @param string $name
-     * @return \Amsrafid\ActivityLog\ActivityLog
+     * @return \Amsrafid\ActivityLog\Logging
      */
     public function mode($name)
     {
         $name = strtolower($name);
         
         if (! in_array($name, $this->loggingModes)) {
-            throw new ActivityLogException("Logging mode must be " . implode("/ ", $this->loggingModes));
+            throw new ActivityLogException("Logging mode must be " . implode("/ ", $this->loggingModes) . ".");
         }
 
         $this->mode = $name;
@@ -195,7 +268,7 @@ class Logging extends Facade
      * Assign model name
      * 
      * @param string $modelName
-     * @return \Amsrafid\ActivityLog\ActivityLog
+     * @return \Amsrafid\ActivityLog\Logging
      */
     public function model($modelName)
     {
@@ -208,7 +281,7 @@ class Logging extends Facade
      * Extends log property
      * 
      * @param array $extendedProperty
-     * @return \Amsrafid\ActivityLog\ActivityLog
+     * @return \Amsrafid\ActivityLog\Logging
      */
     public function property($extendedProperty)
     {

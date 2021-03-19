@@ -23,7 +23,7 @@ trait PropertyHandler
             $oldValue[$key] = $old[$key];
         }, array_keys($newValue));
 
-        $this->property = [
+        return $this->property = [
             'old' => $oldValue,
             'new' => $newValue
         ];
