@@ -4,7 +4,7 @@ Simple but very powerful activity log package for laravel framework.
 
 ## Basic Use
 
-Activity Log is very easy to use. A trait named **_ActivityLogHandler_** is to be added to any model to activate logging. On the other hand log can be enabled manually by initiating **_ActivityLog_** class. Auto logging system can be added as like bellow,
+Activity Log is very easy to use. A trait named **_ActivityLogHandler_** is to be added to any model to activate logging. On the other hand log can be enabled manually by initiating **_Logging_** class. Auto logging system can be added as like bellow,
 
 ~~~php
 namespace App;
@@ -36,7 +36,7 @@ $myModel->data = 'value';
 $myModel->save();
 
 // Create new Activity Log
-$log = new ActivityLog(MyModel::class, 'insert');   // model name, mode -> [insert, update, delete]
+$log = new Logging(MyModel::class, 'insert');   // model name, mode -> [insert, update, delete]
 $log->property([
     'new' => [
         'data' => 'value'
@@ -45,7 +45,7 @@ $log->property([
 $log->logName('Save my model');
 $log->description('My model log has been created manually.');
 $log->primary_id = $myModel->id;
-$log->create();
+$log->start();
 ~~~
 
 _Note: Clear configuration cache to active configuration file. Otherwise, log may not be created._
