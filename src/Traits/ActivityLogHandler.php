@@ -3,7 +3,7 @@
 namespace Amsrafid\ActivityLog\Traits;
 
 use Illuminate\Support\Str;
-use Amsrafid\ActivityLog\ActivityLog;
+use Amsrafid\ActivityLog\Logging;
 
 /**
  * Activity log operation Handler
@@ -115,7 +115,7 @@ trait ActivityLogHandler
 
         $model = get_class($this);
 
-        $log = new ActivityLog($model, $this->mode);
+        $log = new Logging($model, $this->mode);
 
         foreach($globalScopes as $scopes) {
             $method = Str::camel($scopes);

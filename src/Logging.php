@@ -7,7 +7,7 @@ use Amsrafid\ActivityLog\ActivityLogException;
 use Amsrafid\ActivityLog\Traits\PropertyHandler;
 use Amsrafid\ActivityLog\Models\ActivityLog as ModelsActivityLog;
 
-class ActivityLog extends Facade
+class Logging extends Facade
 {
     use PropertyHandler;
 
