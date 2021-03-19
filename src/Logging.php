@@ -90,9 +90,10 @@ class Logging extends Facade
     public function __construct($model, $mode = 'insert')
     {
         $this->config = config('activitylog');
+        $this->mode = $mode;
 
-        if (! empty($mode)) {
-            $this->mode = $mode;
+        if (! \in_array($mode, $this->loggingModes)) {
+            throw new ActivityLogException("Logging mode must be " . implode("/", $this->loggingModes) . ".");
         }
 
         if (is_string($model)) {
@@ -256,7 +257,7 @@ class Logging extends Facade
         $name = strtolower($name);
         
         if (! in_array($name, $this->loggingModes)) {
-            throw new ActivityLogException("Logging mode must be " . implode("/ ", $this->loggingModes) . ".");
+            throw new ActivityLogException("Logging mode must be " . implode("/", $this->loggingModes) . ".");
         }
 
         $this->mode = $name;
