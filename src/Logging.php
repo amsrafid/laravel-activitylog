@@ -3,9 +3,10 @@
 namespace Amsrafid\ActivityLog;
 
 use Illuminate\Support\Facades\Facade;
+use Illuminate\Database\Eloquent\Model;
+use Amsrafid\ActivityLog\Models\ActivityLog;
 use Amsrafid\ActivityLog\ActivityLogException;
 use Amsrafid\ActivityLog\Traits\PropertyHandler;
-use Amsrafid\ActivityLog\Models\ActivityLog as ModelsActivityLog;
 
 class Logging extends Facade
 {
@@ -84,7 +85,7 @@ class Logging extends Facade
 
         if (is_string($modelName)) {
             $this->model = $modelName;
-        } else if ($modelName instanceof \Illuminate\Database\Eloquent\Model) {
+        } else if ($modelName instanceof Model) {
             $this->model = get_class($modelName);
             $this->primary_id = $modelName->getKey();
         } else {
@@ -111,7 +112,7 @@ class Logging extends Facade
             return true;
         }
         
-        $log = new ModelsActivityLog();
+        $log = new ActivityLog();
         $log->log_name = $this->log_name;
         $log->mode = $this->mode;
         $log->description = $this->description;
