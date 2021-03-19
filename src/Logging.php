@@ -216,4 +216,14 @@ class Logging extends Facade
 
         return $this;
     }
+
+    /**
+     * Start Logging
+     * 
+     * @return boolean
+     */
+    public function start()
+    {
+        return $this->create();
+    }
 }
