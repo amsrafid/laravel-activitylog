@@ -2,6 +2,14 @@
 
 Simple but very powerful activity log package for laravel framework.
 
+## Get Started
+
+Activity log has to be started after migrating log table. To make migration, hit the command bellow to the terminal,
+
+~~~php
+php artisan migrate
+~~~
+
 ## Basic Use
 
 Activity Log is very easy to use. A trait named **_ActivityLogHandler_** is to be added to any model to activate logging. On the other hand log can be enabled manually by initiating **_Logging_** class. Auto logging system can be added as like bellow,
@@ -30,6 +38,13 @@ class MyModel extends Model
 Manual logging system is added bellow,
 
 ~~~php
+$myModel = MyModel::find(1);
+$myModel->data = 'value';
+$log = new Logging($myModel, 'update'); // model instance, mode -> [insert, update, delete]
+$log->start();
+~~~
+OR
+~~~php
 // Insertion operation
 $myModel = new MyModel;
 $myModel->data = 'value';
@@ -38,9 +53,7 @@ $myModel->save();
 // Create new Activity Log
 $log = new Logging(MyModel::class, 'insert');   // model name, mode -> [insert, update, delete]
 $log->property([
-    'new' => [
-        'data' => 'value'
-    ]
+    'new' => $myModel->toArray()
 ]);
 $log->logName('Save my model');
 $log->description('My model log has been created manually.');
