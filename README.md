@@ -57,7 +57,7 @@ $log->property([
 ]);
 $log->logName('Save my model');
 $log->description('My model log has been created manually.');
-$log->primary_id = $myModel->id;
+$log->primaryId($myModel->id);
 $log->start();
 ~~~
 

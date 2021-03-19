@@ -279,6 +279,19 @@ class Logging extends Facade
     }
 
     /**
+     * Assign primary id
+     * 
+     * @param string $id
+     * @return \Amsrafid\ActivityLog\Logging
+     */
+    public function primaryId($id)
+    {
+        $this->primary_id = $id;
+
+        return $this;
+    }
+
+    /**
      * Extends log property
      * 
      * @param array $extendedProperty
