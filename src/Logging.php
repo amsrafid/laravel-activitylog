@@ -48,7 +48,8 @@ class Logging
     protected $loggingModes = [
         'insert',
         'update',
-        'delete'
+        'delete',
+        'forceDelete'
     ];
 
     /**
@@ -77,7 +78,7 @@ class Logging
      * 
      * @var \Illuminate\Database\Eloquent\Model|null
      */
-    protected $modelInstant = null;
+    protected $modelInstance = null;
     
     /**
      * ActivityLog class constructor
@@ -102,7 +103,7 @@ class Logging
         }
         
         if ($model instanceof Model) {
-            $this->modelInstant = $model;
+            $this->modelInstance = $model;
 
             $this->formatProperty($model);
 
@@ -136,7 +137,7 @@ class Logging
         try {
             DB::beginTransaction();
             
-            if ($this->modelInstant instanceof Model) {
+            if ($this->modelInstance instanceof Model) {
                 $query = $this->dispatchQuery();
             }
             
@@ -171,15 +172,15 @@ class Logging
      */
     public function dispatchQuery()
     {
-        if (! ($this->modelInstant instanceof Model)) {
+        if (! ($this->modelInstance instanceof Model)) {
             return null;
         }
 
-        if ($this->mode == 'delete') {
-            return $this->modelInstant->delete();
+        if (\in_array($this->mode, ['delete', 'forceDelete'])) {
+            return $this->modelInstance->{$this->mode}();
         }
         
-        return $this->modelInstant->save();
+        return $this->modelInstance->save();
     }
 
     /**
@@ -190,7 +191,7 @@ class Logging
      */
     public function formatProperty($model)
     {
-        if ($this->mode == 'delete') {
+        if (\in_array($this->mode, ['delete', 'forceDelete'])) {
             return $this->property = [
                 'old' => $model->getRawOriginal()
             ];

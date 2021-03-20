@@ -36,22 +36,6 @@ trait ActivityLogHandler
     private $ignore_logging = [];
 
     /**
-     * Validate when log is allowed to be created
-     * 
-     * @return void
-     */
-    private function validateLog()
-    {
-        if (isset($this->ignore_log)) {
-            $this->ignore_logging = $this->ignore_log;
-        }
-        
-        if (! in_array($this->mode, $this->ignore_logging)) {
-            $this->saveLogging();
-        }
-    }
-
-    /**
      * Save the model to the database.
      *
      * @param  array  $options
@@ -78,6 +62,33 @@ trait ActivityLogHandler
     public function delete()
     {
         $this->mode = 'delete';
+        
+        $this->performDelete();
+    }
+
+    /**
+     * Force Delete the model from the database.
+     *
+     * @return bool|null
+     *
+     * @throws \Exception
+     */
+    public function forceDelete()
+    {
+        $this->mode = 'forceDelete';
+        
+        $this->performDelete();
+    }
+
+    /**
+     * Perform delete operation with logging
+     * 
+     * @return bool|null
+     *
+     * @throws \Exception
+     */
+    private function performDelete()
+    {
         $this->property = [
             'old' => $this->attributes
         ];
@@ -87,6 +98,22 @@ trait ActivityLogHandler
         $this->validateLog();
 
         return $delete;
+    }
+
+    /**
+     * Validate when log is allowed to be created
+     * 
+     * @return void
+     */
+    private function validateLog()
+    {
+        if (isset($this->ignore_log)) {
+            $this->ignore_logging = $this->ignore_log;
+        }
+        
+        if (! in_array($this->mode, $this->ignore_logging)) {
+            $this->saveLogging();
+        }
     }
 
     /**

@@ -30,7 +30,7 @@ class MyModel extends Model
     protected $description = "Log description";
 
     protected $ignore_log = [
-        // if any logging mode is to be ignored in (insert, update, delete)
+        // if any logging mode is to be ignored in (insert, update, delete, forceDelete)
     ];
 }
 ~~~
@@ -40,7 +40,7 @@ Manual logging system is added bellow,
 ~~~php
 $myModel = MyModel::find(1);
 $myModel->data = 'value';
-$log = new Logging($myModel, 'update'); // model instance, mode -> [insert, update, delete]
+$log = new Logging($myModel, 'update'); // model instance, mode -> [insert, update, delete, forceDelete]
 $log->start();
 ~~~
 OR
@@ -51,7 +51,7 @@ $myModel->data = 'value';
 $myModel->save();
 
 // Create new Activity Log
-$log = new Logging(MyModel::class, 'insert');   // model name, mode -> [insert, update, delete]
+$log = new Logging(MyModel::class, 'insert');   // model name, mode -> [insert, update, delete, forceDelete]
 $log->property([
     'new' => $myModel->toArray()
 ]);
