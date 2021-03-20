@@ -92,7 +92,7 @@ protected function schedule(Schedule $schedule)
 }
 ~~~
 
-*Note: Data will be deleted the day(s) before the value of the key `clean_log_before_days` given into config file.*
+*Note: Data will be deleted the day(s) before the value of the key `clean_log_before_days` given into config file when `--date` or `--day` option is not given.*
 
 ## Authors
 
