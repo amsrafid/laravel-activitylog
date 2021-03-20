@@ -32,7 +32,7 @@ class Logging
      * 
      * @var string
      */
-    protected $description = 'Activity log';
+    protected $description = 'Activity log description.';
 
     /**
      * Model name
@@ -93,11 +93,19 @@ class Logging
         $this->config = config('activitylog');
         $this->mode = $mode;
 
+        if (isset($this->config['default_log_name'])) {
+            $this->log_name = $this->config['default_log_name'];
+        }
+
+        if (isset($this->config['default_description'])) {
+            $this->description = $this->config['default_description'];
+        }
+
         if (! \in_array($mode, $this->loggingModes)) {
             throw new ActivityLogException("Logging mode must be " . implode("/", $this->loggingModes) . ".");
         }
 
-        if (is_string($model)) {
+        if (\is_string($model)) {
             $this->model = $model;
 
             return;
