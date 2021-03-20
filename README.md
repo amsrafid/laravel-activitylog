@@ -65,11 +65,21 @@ _Note: Clear configuration cache to active configuration file. Otherwise, log ma
 
 ## Log cleaning up
 
-Log can be deleted when a lot of activity has been recorded. To solve this problem artisan command `clear:log` can help. It can operate when run the command bellow to the command window,
+Log can be deleted when a lot of activity has been recorded. To solve this problem, custom artisan command `clear:log` can help. It can operate when run the command bellow to the command window,
 
 ~~~php
 php artisan clear:log
 ~~~
+OR
+~~~php
+php artisan clear:log --day=7
+~~~
+OR
+~~~php
+php artisan clear:log --date=2021-03-19
+~~~
+
+Here, option `--date` denotes the date before log will be deleted and `--day` to the number of day(s) before log will be cleared. Option _**day**_ will not be applicable when _**date**_ is given.
 
 To operate cleaning automatically, a schedule can be created to console Kernel like bellow,
 

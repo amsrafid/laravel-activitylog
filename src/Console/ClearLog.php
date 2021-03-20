@@ -11,17 +11,20 @@ class ClearLog extends Command
 {
     /**
      * The name and signature of the console command.
-     *
+     * 
+     * --date: Date before that log will be cleared. Format: Y-m-d
+     * --day: Day before that log will be cleared. Format: /\d+/
+     * 
      * @var string
      */
-    protected $signature = 'clear:log {--D|date=}';
+    protected $signature = 'clear:log {--date=} {--day=}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Clear activity log by given time.';
+    protected $description = 'Clear activity log before given days.';
 
     /**
      * The log configuration bag.
@@ -63,7 +66,7 @@ class ClearLog extends Command
         
         $this->comment('Log cleaning in process...');
 
-        $this->cleanLogBeforeDays = $this->config['clean_log_before_days'];
+        $this->cleanLogBeforeDays = $this->option('day') ?? $this->config['clean_log_before_days'];
 
         $date = $this->option('date') ?? Carbon::now()->subDays($this->cleanLogBeforeDays)->format('Y-m-d');
 
@@ -71,10 +74,10 @@ class ClearLog extends Command
             DB::beginTransaction();
 
             $log = new ActivityLog();
-            $log->whereDate('activity_logs.created_at', '<',  $date)
-                ->delete();
+            $records = $log->whereDate('activity_logs.created_at', '<=',  $date)
+                        ->delete();
 
-            $this->info("Deleted records before {$this->cleanLogBeforeDays} day(s) from the activity log.");
+            $this->info("Deleted {$records} record(s) before {$this->cleanLogBeforeDays} day(s) from the activity log.");
 
             DB::commit();
         } catch (\Throwable $th) {
