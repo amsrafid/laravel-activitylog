@@ -3,13 +3,12 @@
 namespace Amsrafid\ActivityLog;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Facade;
 use Illuminate\Database\Eloquent\Model;
 use Amsrafid\ActivityLog\Models\ActivityLog;
 use Amsrafid\ActivityLog\ActivityLogException;
 use Amsrafid\ActivityLog\Traits\PropertyHandler;
 
-class Logging extends Facade
+class Logging
 {
     use PropertyHandler;
 
