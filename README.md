@@ -63,6 +63,28 @@ $log->start();
 
 _Note: Clear configuration cache to active configuration file. Otherwise, log may not be created._
 
+## Barrier
+
+Logging can be paused at any time and to be proceed by using `paused` and `proceed` static method respectively.
+
+~~~php
+$myModel = new MyModel;
+$myModel->data = 'value 1'; // Log created
+$myModel->save();
+
+Logging::paused();  // Logging become paused
+
+$myModel->data = 'value 2'; // Log not created
+$myModel->save();
+
+Logging::proceed(); // Logging proceed again
+
+$myModel->data = 'value 3'; // Log created
+$myModel->save();
+~~~
+
+_Note: Log barrier can be checked by `isPaused` static method._
+
 ## Log cleaning up
 
 Log can be deleted when a lot of activity has been recorded. To solve this problem, custom artisan command `clear:log` can help. It can operate when run the command bellow to the command window,

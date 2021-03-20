@@ -4,13 +4,14 @@ namespace Amsrafid\ActivityLog;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Amsrafid\ActivityLog\Traits\Barrier;
 use Amsrafid\ActivityLog\Models\ActivityLog;
 use Amsrafid\ActivityLog\ActivityLogException;
 use Amsrafid\ActivityLog\Traits\PropertyHandler;
 
 class Logging
 {
-    use PropertyHandler;
+    use PropertyHandler, Barrier;
 
     /**
      * Log name
@@ -64,7 +65,7 @@ class Logging
      * 
      * @var int|null
      */
-    public $primary_id = null;
+    protected $primary_id = null;
 
     /**
      * Configuration information
@@ -79,7 +80,7 @@ class Logging
      * @var \Illuminate\Database\Eloquent\Model|null
      */
     protected $modelInstance = null;
-    
+
     /**
      * ActivityLog class constructor
      * 
@@ -141,19 +142,9 @@ class Logging
                 $query = $this->dispatchQuery();
             }
             
-            $log = new ActivityLog();
-            $log->log_name = $this->log_name;
-            $log->mode = $this->mode;
-            $log->description = $this->description;
-            $log->model = $this->model;
-            $log->primary_id = $this->primary_id;
-            
-            if (auth()->check()) {
-                $log->user_id = auth()->user()->id;
+            if (! self::isPaused()) {
+                $this->dispatchLog();
             }
-    
-            $log->properties = json_encode($this->property);
-            $log->save();
 
             DB::commit();
             
@@ -166,11 +157,34 @@ class Logging
     }
 
     /**
+     * Dispatch activity log
+     * 
+     * @return bool
+     */
+    private function dispatchLog()
+    {
+        $log = new ActivityLog();
+        $log->log_name = $this->log_name;
+        $log->mode = $this->mode;
+        $log->description = $this->description;
+        $log->model = $this->model;
+        $log->primary_id = $this->primary_id;
+        
+        if (auth()->check()) {
+            $log->user_id = auth()->user()->id;
+        }
+
+        $log->properties = json_encode($this->property);
+
+        return $log->save();
+    }
+
+    /**
      * Dispatch query when Model instance has been found
      * 
      * @return bool|null
      */
-    public function dispatchQuery()
+    private function dispatchQuery()
     {
         if (! ($this->modelInstance instanceof Model)) {
             return null;
