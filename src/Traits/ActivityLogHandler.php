@@ -89,10 +89,8 @@ trait ActivityLogHandler
      */
     private function performDelete()
     {
-        $this->property = [
-            'old' => $this->attributes
-        ];
-
+        $this->property = $this->setProperty(null, $this->attributes);
+        
         $delete = parent::delete();
 
         $this->validateLog();
@@ -125,7 +123,7 @@ trait ActivityLogHandler
     {
         $instance = $this->getLogInstance();
         $instance->property($this->property);
-        $instance->primary_id = $this->getKeyForSaveQuery();
+        $instance->primaryId($this->getKeyForSaveQuery());
         $instance->create();
     }
     
@@ -137,7 +135,8 @@ trait ActivityLogHandler
         $globalScopes = [
             'log_name',
             'description',
-            'property'
+            'property',
+            'ignore_fields'
         ];
 
         $model = get_class($this);
@@ -168,9 +167,7 @@ trait ActivityLogHandler
             return 'update';
         }
 
-        $this->property = [
-            'new' => $this->attributes
-        ];
+        $this->property = $this->setProperty($this->attributes);
 
         return 'insert';
     }

@@ -10,11 +10,11 @@ trait PropertyHandler
     /**
      * Set property value for update
      * 
-     * @param array $new    New Value of save query
-     * @param array $old    Old Values of data
+     * @param array|null $new    New Value of save query
+     * @param array|null $old    Old Values of data
      * @return void
      */
-    public function setProperty($new, $old)
+    public function setProperty($new = null, $old = null)
     {
         $oldValue = [];
         $newValue = array_diff_assoc($new, $old);
@@ -23,9 +23,14 @@ trait PropertyHandler
             $oldValue[$key] = $old[$key];
         }, array_keys($newValue));
 
-        return $this->property = [
-            'old' => $oldValue,
-            'new' => $newValue
-        ];
+        if (! is_null($new)) {
+            $this->property['new'] = $newValue;
+        }
+
+        if (! is_null($old)) {
+            $this->property['old'] = $oldValue;
+        }
+
+        return $this->property;
     }
 }

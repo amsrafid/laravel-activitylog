@@ -75,6 +75,14 @@ class Logging
     protected $config = null;
 
     /**
+     * Ignore log fields
+     * listed filed change will not to be logged
+     * 
+     * @var array
+     */
+    protected $ignore_fields = [];
+
+    /**
      * Model Instance
      * 
      * @var \Illuminate\Database\Eloquent\Model|null
@@ -183,10 +191,10 @@ class Logging
         }
 
         $log->properties = json_encode($this->property);
-
+        
         return $log->save();
     }
-
+     
     /**
      * Dispatch query when Model instance has been found
      * 
@@ -297,6 +305,21 @@ class Logging
     {
         $this->model = $modelName;
 
+        return $this;
+    }
+
+    /**
+     * Add ignore fields
+     * 
+     * @param mixed $fields
+     * @return \Amsrafid\ActivityLog\Logging
+     */
+    public function ignoreFields(...$fields)
+    {
+        array_walk_recursive($fields, function($field) {
+            $this->ignore_fields [] = $field;
+        });
+        
         return $this;
     }
 
