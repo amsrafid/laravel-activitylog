@@ -147,6 +147,10 @@ class Logging
             throw new ActivityLogException("Logging mode must not be empty.");
         }
 
+        if (! empty($this->ignore_fields)) {
+            $this->trimProperty($this->property);
+        }
+
         if (! $this->config['allow_null_properties'] && ! $this->propertyValidate()) {
             return true;
         }
@@ -321,6 +325,25 @@ class Logging
         });
         
         return $this;
+    }
+
+    /**
+     * Trim keys of data not to be logged
+     * 
+     * @param array &$set   Data set in which key has to be considered
+     * @return void
+     */
+    public function trimProperty(array &$set)
+    {
+        array_walk($set, function(&$value, $key) use(&$set) {
+            if (is_array($value)) {
+                return $this->trimProperty($value);
+            }
+            
+            if (in_array($key, $this->ignore_fields)) {
+                unset($set[$key]);
+            }
+        });
     }
 
     /**
