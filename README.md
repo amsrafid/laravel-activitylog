@@ -29,6 +29,10 @@ class MyModel extends Model
 
     protected $description = "Log description";
 
+    protected $ignore_fields = [
+        // if any fields that being ignored to be logged
+    ];
+
     protected $ignore_log = [
         // if any logging mode is to be ignored in (insert, update, delete, forceDelete)
     ];
