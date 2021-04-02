@@ -89,7 +89,7 @@ trait ActivityLogHandler
      */
     private function performDelete()
     {
-        $this->property = $this->setProperty(null, $this->attributes);
+        $this->property = $this->setProperty([], $this->attributes);
         
         $delete = parent::delete();
 
@@ -129,6 +129,8 @@ trait ActivityLogHandler
     
     /**
      * Create log instance with 
+     * 
+     * @return \Amsrafid\ActivityLog\Logging
      */
     private function getLogInstance()
     {
