@@ -80,7 +80,10 @@ class Logging
      * 
      * @var array
      */
-    protected $ignore_fields = [];
+    protected $ignore_fields = [
+        'created_at',
+        'updated_at'
+    ];
 
     /**
      * Model Instance
