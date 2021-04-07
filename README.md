@@ -2,6 +2,22 @@
 
 Simple but very powerful activity log package for laravel framework.
 
+## Installation
+
+To install this package, run this command to root directory of the project,
+
+~~~php
+composer require amsrafid/laravel-activitylog
+~~~
+
+To publish config file of this package, run the following command,
+
+~~~php
+php artisan vendor:publish --provider="Amsrafid\ActivityLog\ActivityLogServiceProvider"
+~~~
+
+_Note: Publishing service provider is optional._
+
 ## Get Started
 
 Activity log has to be started after migrating log table. To make migration, hit the command bellow to the terminal,
