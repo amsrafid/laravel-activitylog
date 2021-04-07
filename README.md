@@ -81,6 +81,8 @@ $log->primaryId($myModel->id);
 $log->start();
 ~~~
 
+Here, Property can set by using `setProperty(array new, array old)` method. Where, 2 arguments can be performed to set new and old property of model. Here, default is an empty array for both.
+
 _Note: Clear configuration cache to active configuration file. Otherwise, log may not be created._
 
 ## Barrier
