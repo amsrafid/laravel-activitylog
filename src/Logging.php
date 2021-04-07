@@ -217,7 +217,10 @@ class Logging
             return $this->modelInstance->{$this->mode}();
         }
         
-        return $this->modelInstance->save();
+        $save = $this->modelInstance->save();
+        $this->primary_id = $this->modelInstance->getKey();
+
+        return $save;
     }
 
     /**
