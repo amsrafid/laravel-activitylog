@@ -22,8 +22,8 @@ class ActivityLog extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function properties()
+    public function getPropertiesAttribute($value)
     {
-        return json_decode($this->properties);
+        return json_decode($value, true) ?? [];
     }
 }
