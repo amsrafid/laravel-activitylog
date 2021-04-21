@@ -109,7 +109,7 @@ _Note: Log barrier can be checked by `isPaused` static method._
 
 ## Parsing of log
 
-Log can be parsed by using \Amsrafid\ActivityLog\Models\ActivityLog\ActivityLog::class that extends with \Illuminate\Database\Eloquent\Model. So, ActivityLog::class acts same as a regular model. Here, `properties` property returns an `array` better to use.
+Log can be parsed by using `\Amsrafid\ActivityLog\Models\ActivityLog\ActivityLog::class` that extends with `\Illuminate\Database\Eloquent\Model`. So, ActivityLog::class acts same as a regular model. Here, `properties` property returns an `array` to better use.
 
 ~~~php
 $set = ActivityLog::latest()->first();
