@@ -107,6 +107,16 @@ $myModel->save();
 
 _Note: Log barrier can be checked by `isPaused` static method._
 
+## Parsing of log
+
+Log can be parsed by using \Amsrafid\ActivityLog\Models\ActivityLog\ActivityLog::class that extends with \Illuminate\Database\Eloquent\Model. So, ActivityLog::class acts same as a regular model. Here, `properties` property returns an `array` better to use.
+
+~~~php
+$set = ActivityLog::latest()->first();
+
+echo $set->properties['new']['description'];
+~~~
+
 ## Log cleaning up
 
 Log can be deleted when a lot of activity has been recorded. To solve this problem, custom artisan command `clear:log` can help. It can operate when run the command bellow to the command window,
