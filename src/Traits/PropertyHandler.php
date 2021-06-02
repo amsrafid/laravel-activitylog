@@ -23,7 +23,7 @@ trait PropertyHandler
         
         if (! empty($old)) {
             array_map(function($key) use(&$oldValue, $old) {
-                $oldValue[$key] = $old[$key];
+                $oldValue[$key] = $old[$key] ?? null;
             }, array_keys($newValue));
         }
 
